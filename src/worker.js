@@ -128,7 +128,6 @@ async function handleRedirect(code, env, ctx) {
   return Response.redirect(row.url, 302);
 }
 
-// 关键改动：未登录只返回 code / url / createdAt；密码正确才附带 hits
 async function handleListLinks(request, env) {
   const adminPassword = getAdminPassword(env);
   const provided = request.headers.get('X-Admin-Password') || '';
@@ -470,7 +469,6 @@ const HTML = `<!DOCTYPE html>
       }
     });
 
-    // 关键改动：登录时带上 X-Admin-Password，未登录不带
     function openPanel() {
       panelOpen = true;
       menuPanel.classList.add('open');
@@ -487,7 +485,6 @@ const HTML = `<!DOCTYPE html>
           });
         })
         .then(function (data) {
-          // 服务端判定密码失效（例如密码被改过），同步前端登录态
           if (adminPassword && !data.authorized) {
             adminPassword = '';
             clearPassword();
@@ -512,7 +509,6 @@ const HTML = `<!DOCTYPE html>
         return;
       }
       linkList.innerHTML = links.map(function (l) {
-        // 未登录时 hits 字段不存在，meta 只显示创建时间
         var meta = (typeof l.hits === 'number')
           ? (l.hits + ' 次点击 · ' + new Date(l.createdAt).toLocaleString('zh-CN'))
           : ('创建于 ' + new Date(l.createdAt).toLocaleString('zh-CN'));

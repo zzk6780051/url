@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import worker from '../worker.js';
+import worker from '../src/worker.js';
 
 // ---------------------------------------------------------------------------
 // 最小 D1 模拟：只实现 worker.js 用到的 5 条 SQL

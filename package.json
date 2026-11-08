@@ -1,17 +1,13 @@
 {
-  "name": "url-shortener-worker",
+  "name": "cf-shortlink",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
-  "description": "基于 Cloudflare Workers + D1 的短链接服务",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "test": "node --test",
-    "db:init:local": "wrangler d1 execute shortlinks --local --file=./schema.sql",
-    "db:init:remote": "wrangler d1 execute shortlinks --remote --file=./schema.sql"
+    "test": "node --test"
   },
   "devDependencies": {
-    "wrangler": "^4.158.0"
+    "wrangler": "^4.0.0"
   }
 }
