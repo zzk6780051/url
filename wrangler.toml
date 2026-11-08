@@ -1,0 +1,14 @@
+name = "url-shortener"
+main = "worker.js"
+compatibility_date = "2026-11-08"
+
+# 短链数据存放在 D1 中。首次部署前需要：
+#   npx wrangler d1 create shortlinks
+# 然后把返回的 database_id 填到下面。
+[[d1_databases]]
+binding = "DB"
+database_name = "shortlinks"
+database_id = "REPLACE_WITH_YOUR_DATABASE_ID"
+
+# 管理密码不要写在这里，使用 `wrangler secret put ADMIN_PASSWORD` 注入。
+# （本地开发可写在 .dev.vars 里，该文件已被 .gitignore 忽略。）
