@@ -16,7 +16,7 @@
 
 ### 1. 创建 D1 数据库
 
-Cloudflare 控制台 → **Storage & Databases → D1 → Create Database**，命名为 `cf-shortlink-db`。
+Cloudflare 控制台 → **Storage & Databases → D1 → Create Database**，命名为 `url`。
 
 ### 2. 初始化表结构
 
