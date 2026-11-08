@@ -157,6 +157,18 @@ test('创建短链：未授权 401，非法 URL 400，自定义短码重复 409'
   assert.equal(dup.status, 409);
 });
 
+test('自定义短码：长度 1 可用，超过 32 位被拒', async () => {
+  const env = makeEnv();
+
+  const one = await createLink(env, 'https://example.com/one', 'a');
+  assert.equal(one.status, 201);
+  assert.equal((await one.json()).code, 'a');
+
+  const longCode = 'a'.repeat(33);
+  const tooLong = await createLink(env, 'https://example.com/long', longCode);
+  assert.equal(tooLong.status, 400);
+});
+
 test('创建短链：随机短码格式合法且唯一', async () => {
   const env = makeEnv();
   const codes = new Set();

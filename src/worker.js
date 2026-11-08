@@ -89,8 +89,8 @@ async function handleShorten(request, env) {
 
   if (customCode) {
     const code = String(customCode).trim();
-    if (!/^[A-Za-z0-9_-]{2,32}$/.test(code)) {
-      return json({ error: '自定义短码只能包含字母、数字、-、_，长度 2–32' }, 400);
+    if (!/^[A-Za-z0-9_-]{1,32}$/.test(code)) {
+      return json({ error: '自定义短码只能包含字母、数字、-、_，长度 1–32' }, 400);
     }
     const ok = await tryInsert(env, code, url);
     if (!ok) {
