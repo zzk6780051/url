@@ -1,5 +1,5 @@
 {
-  "name": "cf-shortlink",
+  "name": "url",
   "main": "src/worker.js",
   "compatibility_date": "2026-11-01",
   "d1_databases": [

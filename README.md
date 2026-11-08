@@ -1,4 +1,4 @@
-# cf-shortlink
+# url 短链服务
 
 基于 Cloudflare Workers + D1 的短链服务。支持自定义短码、点击计数、管理员登录、列表查看与删除。
 
@@ -34,6 +34,8 @@ Worker 项目 → **Settings → Variables and Secrets → Add**：
 
 Worker 项目 → **Settings → Builds → Connect**，选择仓库和 `main` 分支。Build command 留空，Deploy command 保持 `npx wrangler deploy`。
 
+Worker 名字必须与 `wrangler.jsonc` 里的 `name`（`url`）一致，否则会部署出第二个 Worker，而域名还指向旧的。
+
 ### 5. 触发部署
 
 向 `main` 推送任意提交，Cloudflare 自动部署。部署后在浏览器打开 Worker 的 `*.workers.dev` 域名即可使用。
@@ -57,7 +59,7 @@ https://<你的 worker 域名>/api/health
      ```
   2. 控制台添加后必须点 **Deploy**（或触发一次仓库部署），Secret 才会进入运行版本。
   3. 名字必须完全一致：`ADMIN_PASSWORD`，全大写、无空格；`Type` 选 Secret。
-  4. 确认打开域名对应的 Worker 名字是 `wrangler.jsonc` 里的 `cf-shortlink`。Git 集成项目名与配置里的 `name` 不一致时，可能同时存在两个 Worker，Secret 容易加到没在用的那个上。
+  4. 确认打开域名对应的 Worker 名字是 `wrangler.jsonc` 里的 `url`。Git 集成项目名与配置里的 `name` 不一致时，可能同时存在两个 Worker，Secret 容易加到没在用的那个上。
   5. 别加到 **Build variables** 里：那是构建期变量，Worker 运行时读不到；要加在 **Variables and Secrets**（运行时）。
   6. 用 `npx wrangler secret list` 确认当前 Worker 有哪些 Secret。
 - `"db": "error"` —— D1 绑定有问题：确认 `wrangler.jsonc` 的 `d1_databases` 绑定名是 `DB`、`database_name` 是 `url`，且该 D1 已执行过 `schema.sql`。
