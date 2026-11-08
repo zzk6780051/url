@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import worker from '../src/worker.js';
 
 // ---------------------------------------------------------------------------
-// 最小 D1 模拟：只实现 worker.js 用到的 5 条 SQL
+// 最小 D1 模拟：只实现 worker.js 用到的 6 条 SQL
 // ---------------------------------------------------------------------------
 class MockDB {
   constructor() {
@@ -41,6 +41,9 @@ class MockDB {
         throw new Error('Unexpected SQL (run): ' + sql);
       },
       async first() {
+        if (sql === 'SELECT 1') {
+          return { 1: 1 };
+        }
         if (sql.startsWith('SELECT url FROM links')) {
           const row = db.rows.get(this.args[0]);
           return row ? { url: row.url } : null;
@@ -288,4 +291,31 @@ test('未配置 ADMIN_PASSWORD 时登录/创建/删除返回 500', async () => {
     })
   );
   assert.equal(del.status, 500);
+});
+
+test('诊断接口 /api/health：密码已配置、D1 正常', async () => {
+  const env = makeEnv();
+  const res = await call(env, req('/api/health'));
+  assert.equal(res.status, 200);
+  const data = await res.json();
+  assert.equal(data.ok, true);
+  assert.equal(data.passwordConfigured, true);
+  assert.equal(data.db, 'ok');
+  assert.ok(data.envKeys.includes('DB'));
+  assert.ok(data.envKeys.includes('ADMIN_PASSWORD'));
+});
+
+test('诊断接口 /api/health：密码未配置', async () => {
+  const env = makeEnv();
+  delete env.ADMIN_PASSWORD;
+  const data = await (await call(env, req('/api/health'))).json();
+  assert.equal(data.passwordConfigured, false);
+  assert.equal(data.db, 'ok');
+});
+
+test('诊断接口 /api/health：D1 查询失败时 db 为 error', async () => {
+  const env = { ADMIN_PASSWORD: PASSWORD, DB: { prepare() { throw new Error('boom'); } } };
+  const data = await (await call(env, req('/api/health'))).json();
+  assert.equal(data.passwordConfigured, true);
+  assert.equal(data.db, 'error');
 });

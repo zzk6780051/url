@@ -180,6 +180,23 @@ async function handleDelete(request, env, code) {
   return json({ ok: true, code });
 }
 
+// 诊断接口：只暴露「有没有配置密码」「D1 是否可用」和绑定名，不返回任何值
+async function handleHealth(request, env) {
+  let db = 'ok';
+  try {
+    await env.DB.prepare('SELECT 1').first();
+  } catch (err) {
+    db = 'error';
+    console.error('health: D1 query failed', err);
+  }
+  return json({
+    ok: true,
+    passwordConfigured: !!getAdminPassword(env),
+    db,
+    envKeys: Object.keys(env).sort()
+  });
+}
+
 const HTML = `<!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -646,6 +663,10 @@ export default {
 
     if (request.method === 'GET' && path === '/api/links') {
       return handleListLinks(request, env);
+    }
+
+    if (request.method === 'GET' && path === '/api/health') {
+      return handleHealth(request, env);
     }
 
     if (request.method === 'DELETE' && path.startsWith('/api/links/')) {
